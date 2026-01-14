@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flujo de Aprobaciones - Banco Bogotá</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-clipboard-check"></i> Sistema de Aprobaciones</h1>
+            <p>Banco Bogotá - CoE Desarrollo</p>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="crear">Crear Solicitud</button>
+            <button class="tab-btn" data-tab="pendientes">Pendientes <span id="badge-pendientes" class="badge">0</span></button>
+            <button class="tab-btn" data-tab="historial">Historial</button>
+        </div>
+
+        
+        <div id="crear-tab" class="tab-content active">
+            <div class="card">
+                <h2><i class="fas fa-plus-circle"></i> Nueva Solicitud de Aprobación</h2>
+                <form id="form-solicitud">
+                    <div class="form-group">
+                        <label for="titulo"><i class="fas fa-heading"></i> Título *</label>
+                        <input type="text" id="titulo" required placeholder="Ej: Publicar nueva versión del microservicio">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="descripcion"><i class="fas fa-align-left"></i> Descripción *</label>
+                        <textarea id="descripcion" rows="3" required placeholder="Describe detalladamente lo que necesitas aprobar..."></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="solicitante"><i class="fas fa-user"></i> Solicitante *</label>
+                            <select id="solicitante" required>
+                                <option value="">Seleccionar...</option>
+                                <option value="juan.perez">Juan Pérez</option>
+                                <option value="maria.gomez">María Gómez</option>
+                                <option value="carlos.lopez">Carlos López</option>
+                                <option value="ana.rodriguez">Ana Rodríguez</option>
+                                <option value="laura.martinez">Laura Martínez</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="responsable"><i class="fas fa-user-check"></i> Responsable *</label>
+                            <select id="responsable" required>
+                                <option value="">Seleccionar...</option>
+                                <option value="maria.gomez">María Gómez</option>
+                                <option value="ana.rodriguez">Ana Rodríguez</option>
+                                <option value="pedro.sanchez">Pedro Sánchez</option>
+                                <option value="juan.perez">Juan Pérez</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tipo"><i class="fas fa-tags"></i> Tipo de Solicitud *</label>
+                        <select id="tipo" required>
+                            <option value="">Seleccionar...</option>
+                            
+                        </select>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i> Enviar Solicitud
+                        </button>
+                        <button type="button" id="btn-limpiar" class="btn btn-secondary">
+                            <i class="fas fa-broom"></i> Limpiar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        
+        <div id="pendientes-tab" class="tab-content">
+            <div class="card">
+                <h2><i class="fas fa-clock"></i> Solicitudes Pendientes de Aprobación</h2>
+                <div class="filter-bar">
+                    <input type="text" id="buscar-pendientes" placeholder="Buscar por título o solicitante...">
+                </div>
+                <div id="lista-pendientes" class="solicitudes-list">
+                    
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <p>No hay solicitudes pendientes</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+        <div id="historial-tab" class="tab-content">
+            <div class="card">
+                <h2><i class="fas fa-history"></i> Historial de Solicitudes</h2>
+                <div class="filter-bar">
+                    <select id="filtro-estado">
+                        <option value="todos">Todos los estados</option>
+                        <option value="pendiente">Pendientes</option>
+                        <option value="aprobado">Aprobadas</option>
+                        <option value="rechazado">Rechazadas</option>
+                    </select>
+                </div>
+                <div id="lista-historial" class="solicitudes-list">
+                    
+                    <div class="empty-state">
+                        <i class="fas fa-history"></i>
+                        <p>No hay solicitudes en el historial</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+        <div id="modal-aprobar" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3><i class="fas fa-clipboard-check"></i> Revisar Solicitud</h3>
+                    <button class="close-modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div id="modal-detalles">
+                        
+                    </div>
+                    <div class="form-group">
+                        <label for="comentario-aprobador"><i class="fas fa-comment"></i> Comentario</label>
+                        <textarea id="comentario-aprobador" rows="3" placeholder="Agrega un comentario sobre tu decisión..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="usuario-aprobador"><i class="fas fa-user-tag"></i> Usuario que aprueba *</label>
+                        <select id="usuario-aprobador" required>
+                            <option value="">Seleccionar...</option>
+                            <option value="maria.gomez">María Gómez</option>
+                            <option value="ana.rodriguez">Ana Rodríguez</option>
+                            <option value="pedro.sanchez">Pedro Sánchez</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-rechazar" class="btn btn-danger">
+                        <i class="fas fa-times"></i> Rechazar
+                    </button>
+                    <button id="btn-aprobar" class="btn btn-success">
+                        <i class="fas fa-check"></i> Aprobar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Sistema de Flujo de Aprobaciones - Reto Banco Bogotá | API: <span id="api-status" class="status-offline">Desconectado</span></p>
+        </footer>
+    </div>
+
+    <script src="js/services/ApiService.js"></script>
+    <script src="js/models/SolicitudModel.js"></script>
+    <script src="js/views/SolicitudView.js"></script>
+    <script src="js/controllers/SolicitudController.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
